@@ -60,18 +60,28 @@ class RandomWalk:
         return self.var() ** (1 / 2)
 
 
-def corr(w1: RandomWalk, w2: RandomWalk) -> float:
-    """Return the correlation between <w1> and <w2>."""
-
-
 def cov(w1: RandomWalk, w2: RandomWalk) -> float:
     """Return the covariance between <w1> and <w2>."""
+    w1_expt, w2_expt = w1.expectation(), w2.expectation()
+
+    c1 = (w1.theta * w2.theta) * (w1.step_up * w2.step_up)
+    c2 = (w1.theta * (1 - w2.theta)) * (w1.step_up * w2.step_down)
+    c3 = ((1 - w1.theta) * w2.theta) * (w1.step_down * w2.step_up)
+    c4 = ((1 - w1.theta) * (1 - w2.theta)) * (w1.step_down * w2.step_down)
+
+    return (c1 + c2 + c3 + c4) - (w1_expt * w2_expt)
+
+
+def corr(w1: RandomWalk, w2: RandomWalk) -> float:
+    """Return the correlation between <w1> and <w2>."""
+    w1_var, w2_var = w1.var(), w2.var()
+    return cov(w1, w2) / ((w1_var * w2_var) ** (1 / 2))
 
 
 if __name__ == "__main__":
     rw1 = RandomWalk(1 / 2, 1.0, -1.0)  # theta, step_up, step_down
     rw2 = RandomWalk(1 / 2, 0.5, -0.5)
-    n = 300  # Number of steps
+    n = 1000  # Number of steps
 
     # Graphs for both Random Walks
     rw1.run(n)
@@ -89,12 +99,15 @@ if __name__ == "__main__":
     plt.plot(x2, y2, c="#FF0000", label="Root(n)")
     plt.plot(x2, y3, c="#FF0000")
 
-    # Expectation
+    # Mean / Expectation
     expt_rw1, expt_rw2 = rw1.expectation(), rw2.expectation()
     y4_rw1 = [expt_rw1 for i in range(n)]
-    plt.plot(x2, y4_rw1, c="#00008B", label="Expectation RW1")
+    plt.plot(x2, y4_rw1, c="#00008B", label="Mean RW1")
     y4_rw2 = [expt_rw2 for i in range(n)]
-    plt.plot(x2, y4_rw2, c="#FF8C00", label="Expectation RW2")
+    plt.plot(x2, y4_rw2, c="#FF8C00", label="Mean RW2")
+
+    # Corr
+    plt.plot(0, 0, label=f"Correlation = {corr(rw1, rw2)}")
 
     plt.legend()
     plt.show()
