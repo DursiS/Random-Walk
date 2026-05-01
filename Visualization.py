@@ -29,7 +29,6 @@ class RandomWalk:
 
     def step(self) -> None:
         """Move *one* step forward"""
-
         if random.random() < self.theta:
             step = self.step_up
         else:
@@ -41,9 +40,14 @@ class RandomWalk:
 
     def run(self, n: int) -> None:
         """Move <n> consecutive steps forward"""
-
         for i in range(n):
             self.step()
+
+    def expectation(self) -> float:
+        """Get the expected final height given
+        len(self.steps) steps were taken."""
+        expt = self.theta * self.step_up + (1 - self.theta) * self.step_down
+        return len(self.path) * expt
 
 
 if __name__ == "__main__":
@@ -59,6 +63,10 @@ if __name__ == "__main__":
     y3 = [-(200 ** (1 / 2)) for i in range(n)]
     plt.plot(x2, y2, c="#FF0000", label="Root(n)")
     plt.plot(x2, y3, c="#FF0000")
+
+    exptX1 = rw.expectation()
+    y4 = [exptX1 for i in range(n)]
+    plt.plot(x2, y4, c="#008000", label="Expectation")
 
     plt.legend()
     plt.show()
