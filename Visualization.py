@@ -63,28 +63,38 @@ class RandomWalk:
 def corr(w1: RandomWalk, w2: RandomWalk) -> float:
     """Return the correlation between <w1> and <w2>."""
 
-def corr(w1: RandomWalk, w2: RandomWalk) -> float:
+
+def cov(w1: RandomWalk, w2: RandomWalk) -> float:
     """Return the covariance between <w1> and <w2>."""
 
 
 if __name__ == "__main__":
     rw1 = RandomWalk(1 / 2, 1.0, -1.0)  # theta, step_up, step_down
-    rw2 = RandomWalk(1 / 4, 0.5, -0.5)
+    rw2 = RandomWalk(1 / 2, 0.5, -0.5)
     n = 300  # Number of steps
 
+    # Graphs for both Random Walks
     rw1.run(n)
-    x, y = [item[0] for item in rw1.path], [item[1] for item in rw1.path]
-    plt.plot(x, y)
+    x_rw1, y_rw1 = [item[0] for item in rw1.path], [item[1] for item in rw1.path]
+    plt.plot(x_rw1, y_rw1)
 
+    rw2.run(n)
+    x_rw2, y_rw2 = [item[0] for item in rw2.path], [item[1] for item in rw2.path]
+    plt.plot(x_rw2, y_rw2)
+
+    # Root and Legend
     x2 = [i for i in range(n)]
     y2 = [200 ** (1 / 2) for i in range(n)]
     y3 = [-(200 ** (1 / 2)) for i in range(n)]
     plt.plot(x2, y2, c="#FF0000", label="Root(n)")
     plt.plot(x2, y3, c="#FF0000")
 
-    exptX1 = rw1.expectation()
-    y4 = [exptX1 for i in range(n)]
-    plt.plot(x2, y4, c="#008000", label="Expectation")
+    # Expectation
+    expt_rw1, expt_rw2 = rw1.expectation(), rw2.expectation()
+    y4_rw1 = [expt_rw1 for i in range(n)]
+    plt.plot(x2, y4_rw1, c="#00008B", label="Expectation RW1")
+    y4_rw2 = [expt_rw2 for i in range(n)]
+    plt.plot(x2, y4_rw2, c="#FF8C00", label="Expectation RW2")
 
     plt.legend()
     plt.show()
