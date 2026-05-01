@@ -58,14 +58,22 @@ class RandomWalk:
     def std(self) -> float:
         """Return the standard deviation of this random walk"""
         return self.var() ** (1 / 2)
-    
+
+
+def corr(w1: RandomWalk, w2: RandomWalk) -> float:
+    """Return the correlation between <w1> and <w2>."""
+
+def corr(w1: RandomWalk, w2: RandomWalk) -> float:
+    """Return the covariance between <w1> and <w2>."""
+
 
 if __name__ == "__main__":
-    rw = RandomWalk(1 / 2, 1.0, -1.0)  # theta, step_up, step_down
+    rw1 = RandomWalk(1 / 2, 1.0, -1.0)  # theta, step_up, step_down
+    rw2 = RandomWalk(1 / 4, 0.5, -0.5)
     n = 300  # Number of steps
 
-    rw.run(n)
-    x, y = [item[0] for item in rw.path], [item[1] for item in rw.path]
+    rw1.run(n)
+    x, y = [item[0] for item in rw1.path], [item[1] for item in rw1.path]
     plt.plot(x, y)
 
     x2 = [i for i in range(n)]
@@ -74,7 +82,7 @@ if __name__ == "__main__":
     plt.plot(x2, y2, c="#FF0000", label="Root(n)")
     plt.plot(x2, y3, c="#FF0000")
 
-    exptX1 = rw.expectation()
+    exptX1 = rw1.expectation()
     y4 = [exptX1 for i in range(n)]
     plt.plot(x2, y4, c="#008000", label="Expectation")
 
