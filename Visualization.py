@@ -47,8 +47,8 @@ class RandomWalk:
 
 
 if __name__ == "__main__":
-    rw = RandomWalk(1 / 2, 1.0, -1.0)
-    n = 200
+    rw = RandomWalk(1 / 2, 1.0, -1.0)  # theta, step_up, step_down
+    n = 300  # Number of steps
 
     rw.run(n)
     x, y = [item[0] for item in rw.path], [item[1] for item in rw.path]
