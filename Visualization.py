@@ -44,11 +44,21 @@ class RandomWalk:
             self.step()
 
     def expectation(self) -> float:
-        """Get the expected final height given
+        """Return the expected final height given
         len(self.steps) steps were taken."""
         expt = self.theta * self.step_up + (1 - self.theta) * self.step_down
         return len(self.path) * expt
 
+    def var(self) -> float:
+        """Return the variance of this random walk"""
+        c1 = self.theta * (self.step_up**2) + (1 - self.theta) * (self.step_down**2)
+        c2 = (self.theta * self.step_up + (1 - self.theta) * self.step_down) ** 2
+        return len(self.path) * (c1 - c2)
+
+    def std(self) -> float:
+        """Return the standard deviation of this random walk"""
+        return self.var() ** (1 / 2)
+    
 
 if __name__ == "__main__":
     rw = RandomWalk(1 / 2, 1.0, -1.0)  # theta, step_up, step_down
