@@ -24,13 +24,13 @@ def simulate(
 
 
 def get_average_endpoint(
-    _n: int, endpoints: list[tuple[float, float]]
+    _n: int, _endpoints: list[tuple[float, float]]
 ) -> tuple[float, float]:
     """Return the average of the endpoints in <endpoints>
     after <_n> simulations."""
 
     gross_endpoint = [0.0, 0.0]
-    for endpoint in endpoints:
+    for endpoint in _endpoints:
         x, y = endpoint[0], endpoint[1]
         gross_endpoint[0] += x
         gross_endpoint[1] += y
@@ -50,14 +50,18 @@ def get_average_pnl(
 
 if __name__ == "__main__":
     # Precondition: n > 0, theta > 0
-    n = 100
+    n = 1000
     theta = 1 / 2
     step_up, step_down = 1.0, -1.0
 
+    # Print average endpoint, pnl and VaR
     endpoints = simulate(n, theta, step_up, step_down)
+
     average_endpoint = get_average_endpoint(n, endpoints)
+    print(f"Average Endpoint: {average_endpoint}")
+
     average_pnl = get_average_pnl(n, endpoints)
-    print(f"Average Endpoint: {average_endpoint}, Average PNL: {average_pnl}")
+    print(f"Average PNL: {average_pnl}")
 
-
-var_95 = np.percentile(losses, 95)
+    var_95 = np.percentile([endpoint[1] for endpoint in endpoints], 95)
+    print(f"VaR: {var_95}")
