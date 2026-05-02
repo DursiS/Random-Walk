@@ -1,27 +1,51 @@
 from Visualization import RandomWalk
+import numpy as np
 
 
-def simulate(
+def simulation(
     _n: int, _theta: float, _step_up: float, _step_down: float
 ) -> tuple[float, float]:
-    """Return the final endpoint of 1 RandomWalk after <v> steps."""
+    """Return the final endpoint of 1 RandomWalk after <_n> steps."""
 
     rw = RandomWalk(_theta, _step_up, _step_down)
     rw.run(_n)
     return rw.path[-1]
 
 
-def get_average_endpoint(
+def simulate(
     _n: int, _theta: float, _step_up: float, _step_down: float
+) -> list[tuple[float, float]]:
+    """Return a list of <_n> endpoints from different RandomWalks."""
+
+    lst = []
+    for _ in range(_n):
+        lst.append(simulation(_n, _theta, _step_up, _step_down))
+    return lst
+
+
+def get_average_endpoint(
+    _n: int, endpoints: list[tuple[float, float]]
 ) -> tuple[float, float]:
-    """Return the average endpoint of a RandomWalk after <n> stimulation's."""
+    """Return the average of the endpoints in <endpoints>
+    after <_n> simulations."""
 
     gross_endpoint = [0.0, 0.0]
-    for _ in range(_n):
-        x, y = simulate(_n, _theta, _step_up, _step_down)
+    for endpoint in endpoints:
+        x, y = endpoint[0], endpoint[1]
         gross_endpoint[0] += x
         gross_endpoint[1] += y
     return (gross_endpoint[0] / _n), (gross_endpoint[1] / _n)
+
+
+def get_average_pnl(
+    _n: int, endpoints: list[tuple[float, float]], start: tuple[float, float] = (0, 0)
+) -> float:
+    """Return the average PNL in <endpoints> after <_n> simulations."""
+
+    gross_pnl = 0.0
+    for endpoint in endpoints:
+        gross_pnl += endpoint[1] - start[1]
+    return gross_pnl / _n
 
 
 if __name__ == "__main__":
@@ -30,11 +54,10 @@ if __name__ == "__main__":
     theta = 1 / 2
     step_up, step_down = 1.0, -1.0
 
-    average = get_average_endpoint(n, theta, step_up, step_down)
-    print(f"Average Endpoint: {average}")
+    endpoints = simulate(n, theta, step_up, step_down)
+    average_endpoint = get_average_endpoint(n, endpoints)
+    average_pnl = get_average_pnl(n, endpoints)
+    print(f"Average Endpoint: {average_endpoint}, Average PNL: {average_pnl}")
 
 
-
-# pnl = endpoints - paths[0, :]  # profit/loss
-# losses = -pnl
-# var_95 = np.percentile(losses, 95)
+var_95 = np.percentile(losses, 95)
