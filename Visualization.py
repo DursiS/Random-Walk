@@ -78,36 +78,44 @@ def corr(w1: RandomWalk, w2: RandomWalk) -> float:
     return cov(w1, w2) / ((w1_var * w2_var) ** (1 / 2))
 
 
-if __name__ == "__main__":
-    rw1 = RandomWalk(1 / 2, 1.0, -1.0)  # theta, step_up, step_down
-    rw2 = RandomWalk(1 / 2, 0.5, -0.5)
-    n = 1000  # Number of steps
+def visualize(w: RandomWalk) -> None:
+    """Plot the <number>th RandomWalk"""
+    x1, y1 = [item[0] for item in w.path], [item[1] for item in w.path]
+    plt.plot(x1, y1)
 
-    # Graphs for both Random Walks
-    rw1.run(n)
-    x_rw1, y_rw1 = [item[0] for item in rw1.path], [item[1] for item in rw1.path]
-    plt.plot(x_rw1, y_rw1)
 
-    rw2.run(n)
-    x_rw2, y_rw2 = [item[0] for item in rw2.path], [item[1] for item in rw2.path]
-    plt.plot(x_rw2, y_rw2)
+def visualize_stats(w: RandomWalk, number: int, n: int) -> None:
+    """Plot the stats for the <number>th RandomWalk after <n> steps."""
+    # Mean
+    x1 = [item[0] for item in w.path]
+    expt = w.expectation()
+    y2 = [expt for i in range(n)]
+    plt.plot(x1[:-1], y2, c="#00008B", label=f"Mean {number}")
 
     # Root and Legend
     x2 = [i for i in range(n)]
-    y2 = [200 ** (1 / 2) for i in range(n)]
-    y3 = [-(200 ** (1 / 2)) for i in range(n)]
+    y2 = [n ** (1 / 2) for i in range(n)]
+    y3 = [-(n ** (1 / 2)) for i in range(n)]
     plt.plot(x2, y2, c="#FF0000", label="Root(n)")
     plt.plot(x2, y3, c="#FF0000")
 
-    # Mean / Expectation
-    expt_rw1, expt_rw2 = rw1.expectation(), rw2.expectation()
-    y4_rw1 = [expt_rw1 for i in range(n)]
-    plt.plot(x2, y4_rw1, c="#00008B", label="Mean RW1")
-    y4_rw2 = [expt_rw2 for i in range(n)]
-    plt.plot(x2, y4_rw2, c="#FF8C00", label="Mean RW2")
 
-    # Corr
+if __name__ == "__main__":
+    rw1 = RandomWalk(1 / 2, 1.0, -1.0)  # theta, step_up, step_down
+    rw2 = RandomWalk(1 / 2, 0.5, -0.5)
+    n = 1000  # Number of steps, n > 0
+
+    # RandomWalk #1
+    rw1.run(n)
+    visualize(rw1)
+    visualize_stats(rw1, 1, n)
+
+    # RandomWalk #2
+    rw2.run(n)
+    visualize(rw2)
+    visualize_stats(rw2, 2, n)
+
+    # Corr and plotting
     plt.plot(0, 0, label=f"Correlation = {corr(rw1, rw2)}")
-
     plt.legend()
     plt.show()
